@@ -9,6 +9,7 @@ export type PropertyReadyStatus = "siap_huni" | "siap_kosong" | "siap_huni_renov
 export interface Property {
   id: string;
   nama_property: string;
+  foto_url?: string | null;
   group: string | null;
   lebar: number;
   panjang: number;

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 import { PublicPageFrame } from "@/components/public/page-frame";
 import { listFeaturedProperties } from "@/lib/services/property-service";
@@ -60,6 +61,15 @@ export default async function HomePage() {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {featured.map((property) => (
               <article key={property.id} className="space-y-3 rounded-lg border border-zinc-200 bg-white p-4">
+                <div className="overflow-hidden rounded-md border border-zinc-200">
+                  <Image
+                    src={property.foto_url ?? (property.tipe === "ruko" ? "/images/properties/ruko-placeholder.svg" : "/images/properties/villa-placeholder.svg")}
+                    alt={`Foto ${property.nama_property}`}
+                    width={800}
+                    height={500}
+                    className="h-40 w-full object-cover"
+                  />
+                </div>
                 <div className="flex items-start justify-between gap-3">
                   <h3 className="text-lg font-semibold">{property.nama_property}</h3>
                   <StatusBadge status={property.status} />

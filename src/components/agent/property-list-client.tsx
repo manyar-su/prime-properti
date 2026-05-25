@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
@@ -198,6 +199,7 @@ export function PropertyListClient({
         <table className="w-full min-w-[1000px] text-left text-sm">
           <thead className="bg-zinc-100 text-xs uppercase text-zinc-600">
             <tr>
+              <th className="px-3 py-2">Foto</th>
               <th className="px-3 py-2">Nama</th>
               <th className="px-3 py-2">Group</th>
               <th className="px-3 py-2">Ukuran</th>
@@ -214,6 +216,15 @@ export function PropertyListClient({
           <tbody>
             {properties.map((property) => (
               <tr key={property.id} className="border-t border-zinc-100 hover:bg-zinc-50">
+                <td className="px-3 py-2">
+                  <Image
+                    src={property.foto_url ?? (property.tipe === "ruko" ? "/images/properties/ruko-placeholder.svg" : "/images/properties/villa-placeholder.svg")}
+                    alt={`Foto ${property.nama_property}`}
+                    width={160}
+                    height={120}
+                    className="h-12 w-16 rounded object-cover"
+                  />
+                </td>
                 <td className="px-3 py-2 font-medium">
                   <Link href={`/agent/properties/${property.id}`} className="hover:underline">
                     {property.nama_property}

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import { AgentShell } from "@/components/agent/agent-shell";
@@ -31,6 +32,16 @@ export default async function PropertyDetailPage({
             <StatusBadge status={property.status} />
             <ReadyBadge siap={property.siap} />
           </div>
+        </div>
+
+        <div className="overflow-hidden rounded-lg border border-zinc-200">
+          <Image
+            src={property.foto_url ?? (property.tipe === "ruko" ? "/images/properties/ruko-placeholder.svg" : "/images/properties/villa-placeholder.svg")}
+            alt={`Foto ${property.nama_property}`}
+            width={1200}
+            height={700}
+            className="h-72 w-full object-cover"
+          />
         </div>
 
         <div className="grid gap-4 text-sm md:grid-cols-2">

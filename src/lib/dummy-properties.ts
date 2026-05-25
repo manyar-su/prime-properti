@@ -13,6 +13,7 @@ function generateDummyProperty(index: number): Property {
   return {
     id: `dummy-${nomor}`,
     nama_property: `Placeholder Prime ${String(nomor).padStart(2, "0")}`,
+    foto_url: nomor % 2 === 0 ? "/images/properties/ruko-placeholder.svg" : "/images/properties/villa-placeholder.svg",
     group: nomor % 4 === 0 ? null : `Cluster ${((nomor - 1) % 6) + 1}`,
     lebar: 4 + ((nomor - 1) % 4) + 0.5,
     panjang: 12 + ((nomor - 1) % 10),
@@ -105,4 +106,3 @@ export function filterDummyProperties(filters: PropertyFilters): { data: Propert
     total: rows.length,
   };
 }
-
