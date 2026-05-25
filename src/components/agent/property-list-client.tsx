@@ -5,9 +5,10 @@ import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
+import { PropertyDetailModal } from "@/components/properties/property-detail-modal";
 import type { Property } from "@/types/property";
 import { DEFAULT_KAWASAN_OPTIONS, DEFAULT_PAGE_SIZE, PAGINATION_OPTIONS, TYPE_LABELS } from "@/lib/constants";
-import { formatRupiah } from "@/lib/utils";
+import { formatRupiah, getPropertyImageUrl } from "@/lib/utils";
 import { ReadyBadge, StatusBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -55,6 +56,7 @@ export function PropertyListClient({
   const searchParams = useSearchParams();
 
   const [search, setSearch] = useState(searchParams.get("search") ?? "");
+  const [activeProperty, setActiveProperty] = useState<Property | null>(null);
   const debouncedSearch = useDebouncedValue(search, 300);
 
   useEffect(() => {
@@ -195,9 +197,9 @@ export function PropertyListClient({
         )}
       </section>
 
-      <section className="overflow-x-auto rounded-lg border border-zinc-200 bg-white">
+      <section className="overflow-x-auto rounded-xl border border-zinc-200 bg-white shadow-sm">
         <table className="w-full min-w-[1000px] text-left text-sm">
-          <thead className="bg-zinc-100 text-xs uppercase text-zinc-600">
+          <thead className="bg-gradient-to-r from-zinc-100 to-[#f5edd8] text-xs uppercase text-zinc-600">
             <tr>
               <th className="px-3 py-2">Foto</th>
               <th className="px-3 py-2">Nama</th>
@@ -215,10 +217,10 @@ export function PropertyListClient({
           </thead>
           <tbody>
             {properties.map((property) => (
-              <tr key={property.id} className="border-t border-zinc-100 hover:bg-zinc-50">
+              <tr key={property.id} className="border-t border-zinc-100 transition hover:bg-amber-50/40">
                 <td className="px-3 py-2">
                   <Image
-                    src={property.foto_url ?? (property.tipe === "ruko" ? "/images/properties/ruko-placeholder.svg" : "/images/properties/villa-placeholder.svg")}
+                    src={getPropertyImageUrl(property)}
                     alt={`Foto ${property.nama_property}`}
                     width={160}
                     height={120}
@@ -226,9 +228,13 @@ export function PropertyListClient({
                   />
                 </td>
                 <td className="px-3 py-2 font-medium">
-                  <Link href={`/agent/properties/${property.id}`} className="hover:underline">
+                  <button
+                    type="button"
+                    onClick={() => setActiveProperty(property)}
+                    className="cursor-pointer text-left text-[#1A1A1A] hover:text-[#C9A961] hover:underline"
+                  >
                     {property.nama_property}
-                  </Link>
+                  </button>
                 </td>
                 <td className="px-3 py-2">{property.group ?? "-"}</td>
                 <td className="px-3 py-2">{property.lebar} x {property.panjang}</td>
@@ -283,6 +289,8 @@ export function PropertyListClient({
           </Link>
         </div>
       )}
+
+      <PropertyDetailModal property={activeProperty} onClose={() => setActiveProperty(null)} mode="agent" />
     </div>
   );
 }

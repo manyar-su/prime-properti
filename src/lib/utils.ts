@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import type { PropertyType } from "@/types/property";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -42,5 +43,12 @@ export function toSlug(input: string): string {
 export function getBaseUrl() {
   if (process.env.NEXT_PUBLIC_BASE_URL) return process.env.NEXT_PUBLIC_BASE_URL;
   return "http://localhost:3000";
+}
+
+export function getPropertyImageUrl(property: { foto_url?: string | null; tipe: PropertyType }) {
+  if (property.foto_url) return property.foto_url;
+  return property.tipe === "ruko"
+    ? "/images/properties/ruko-placeholder.svg"
+    : "/images/properties/villa-placeholder.svg";
 }
 
