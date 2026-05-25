@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 
+import { env } from "@/lib/env";
 import { getSupabaseAdmin } from "@/lib/supabase/server";
 import type { UserRole } from "@/types/property";
 
@@ -30,6 +31,16 @@ export async function getAdminByEmail(email: string): Promise<AdminProfile | nul
 
 export async function verifyPassword(password: string, passwordHash: string): Promise<boolean> {
   return bcrypt.compare(password, passwordHash);
+}
+
+export function getDemoAdminCredentials() {
+  return {
+    id: "demo-admin",
+    email: env.DEMO_ADMIN_EMAIL.toLowerCase(),
+    password: env.DEMO_ADMIN_PASSWORD,
+    role: "admin" as UserRole,
+    name: "Admin Demo",
+  };
 }
 
 export async function recordLoginAttempt(params: {

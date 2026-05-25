@@ -11,6 +11,8 @@ const envSchema = z.object({
   CSRF_SECRET: z.string().min(16).default("change-me-csrf-secret"),
   CONTACT_NOTIFY_FUNCTION_URL: z.string().url().optional(),
   CONTACT_NOTIFY_FUNCTION_KEY: z.string().optional(),
+  DEMO_ADMIN_EMAIL: z.string().email().default("admin@primeproperty.id"),
+  DEMO_ADMIN_PASSWORD: z.string().min(6).default("admin123"),
 });
 
 export const env = envSchema.parse({
@@ -24,6 +26,8 @@ export const env = envSchema.parse({
   CSRF_SECRET: process.env.CSRF_SECRET,
   CONTACT_NOTIFY_FUNCTION_URL: process.env.CONTACT_NOTIFY_FUNCTION_URL,
   CONTACT_NOTIFY_FUNCTION_KEY: process.env.CONTACT_NOTIFY_FUNCTION_KEY,
+  DEMO_ADMIN_EMAIL: process.env.DEMO_ADMIN_EMAIL,
+  DEMO_ADMIN_PASSWORD: process.env.DEMO_ADMIN_PASSWORD,
 });
 
 export const isProduction = env.NODE_ENV === "production";

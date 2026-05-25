@@ -5,6 +5,7 @@ import { createSessionToken, SESSION_COOKIE, sessionCookieOptions } from "@/lib/
 import { enforceAuthRateLimit, enforceGlobalRateLimit, jsonError } from "@/lib/api";
 import { loginSchema } from "@/lib/validators";
 import {
+  getDemoAdminCredentials,
   getAdminByEmail,
   isLocked,
   recordLoginAttempt,
@@ -24,10 +25,50 @@ export async function POST(request: Request) {
   if (!parsed.success) return jsonError("Payload login tidak valid.", 422);
 
   const ipAddress = getClientIp(request);
-  const admin = await getAdminByEmail(parsed.data.email);
+  const inputEmail = parsed.data.email.toLowerCase();
+  const demo = getDemoAdminCredentials();
+
+  async function safeRecord(success: boolean) {
+    try {
+      await recordLoginAttempt({ email: inputEmail, ipAddress, success });
+    } catch {
+      // ignore when login_attempts table is not reachable
+    }
+  }
+
+  // Demo fallback account for quick access when Supabase admin table isn't ready.
+  if (inputEmail === demo.email && parsed.data.password === demo.password) {
+    const token = await createSessionToken({
+      sub: demo.id,
+      email: demo.email,
+      role: demo.role,
+      name: demo.name,
+    });
+
+    const cookieStore = await cookies();
+    cookieStore.set(SESSION_COOKIE, token, sessionCookieOptions);
+
+    return NextResponse.json({
+      ok: true,
+      user: {
+        id: demo.id,
+        email: demo.email,
+        role: demo.role,
+        name: demo.name,
+      },
+    });
+  }
+
+  let admin = null;
+  try {
+    admin = await getAdminByEmail(inputEmail);
+  } catch {
+    await safeRecord(false);
+    return jsonError("Email atau password salah.", 401);
+  }
 
   if (!admin || !admin.is_enabled) {
-    await recordLoginAttempt({ email: parsed.data.email, ipAddress, success: false });
+    await safeRecord(false);
     return jsonError("Email atau password salah.", 401);
   }
 
@@ -37,11 +78,11 @@ export async function POST(request: Request) {
 
   const ok = await verifyPassword(parsed.data.password, admin.password_hash);
   if (!ok) {
-    await recordLoginAttempt({ email: parsed.data.email, ipAddress, success: false });
+    await safeRecord(false);
     return jsonError("Email atau password salah.", 401);
   }
 
-  await recordLoginAttempt({ email: parsed.data.email, ipAddress, success: true });
+  await safeRecord(true);
 
   const token = await createSessionToken({
     sub: admin.id,
