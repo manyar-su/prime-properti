@@ -1,0 +1,14 @@
+import { createClient } from "@supabase/supabase-js";
+
+import { env } from "@/lib/env";
+
+export function getSupabaseAdmin() {
+  if (!env.NEXT_PUBLIC_SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) {
+    throw new Error("Supabase environment variables are not configured.");
+  }
+
+  return createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, {
+    auth: { persistSession: false },
+  });
+}
+
