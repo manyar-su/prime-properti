@@ -1,5 +1,6 @@
 import type { Property, PropertyFilters, SessionPayload } from "@/types/property";
 import type { PropertyInput } from "@/lib/validators";
+import { DUMMY_PROPERTIES, filterDummyProperties } from "@/lib/dummy-properties";
 import { getSupabaseAdmin } from "@/lib/supabase/server";
 
 const SELECT_COLUMNS =
@@ -36,29 +37,43 @@ function applyPropertyFilters(query: any, filters: PropertyFilters) {
 }
 
 export async function listProperties(filters: PropertyFilters = {}) {
-  const supabase = getSupabaseAdmin();
-  const baseQuery = supabase.from("properties");
-  const query = applyPropertyFilters(baseQuery, filters);
-  const { data, error, count } = await query;
+  try {
+    const supabase = getSupabaseAdmin();
+    const baseQuery = supabase.from("properties");
+    const query = applyPropertyFilters(baseQuery, filters);
+    const { data, error, count } = await query;
 
-  if (error) throw error;
-  return {
-    data: (data ?? []) as Property[],
-    total: count ?? 0,
-  };
+    if (error) throw error;
+    if (!data || data.length === 0) {
+      return filterDummyProperties(filters);
+    }
+
+    return {
+      data: data as Property[],
+      total: count ?? data.length,
+    };
+  } catch {
+    return filterDummyProperties(filters);
+  }
 }
 
 export async function getPropertyById(id: string): Promise<Property | null> {
-  const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
-    .from("properties")
-    .select(SELECT_COLUMNS)
-    .eq("id", id)
-    .is("deleted_at", null)
-    .maybeSingle();
+  try {
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from("properties")
+      .select(SELECT_COLUMNS)
+      .eq("id", id)
+      .is("deleted_at", null)
+      .maybeSingle();
 
-  if (error) throw error;
-  return data as Property | null;
+    if (error) throw error;
+    if (data) return data as Property;
+  } catch {
+    // fallback to local dummy dataset
+  }
+
+  return DUMMY_PROPERTIES.find((row) => row.id === id) ?? null;
 }
 
 export async function createProperty(input: PropertyInput, actor: SessionPayload): Promise<Property> {
@@ -128,16 +143,24 @@ export async function softDeleteProperty(id: string, actor: SessionPayload) {
 }
 
 export async function listFeaturedProperties(limit = 6): Promise<Property[]> {
-  const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
-    .from("properties")
-    .select(SELECT_COLUMNS)
-    .eq("status", "in_stock")
-    .is("deleted_at", null)
-    .order("updated_at", { ascending: false })
-    .limit(limit);
+  try {
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from("properties")
+      .select(SELECT_COLUMNS)
+      .eq("status", "in_stock")
+      .is("deleted_at", null)
+      .order("updated_at", { ascending: false })
+      .limit(limit);
 
-  if (error) throw error;
-  return (data ?? []) as Property[];
+    if (error) throw error;
+    if (!data || data.length === 0) {
+      return DUMMY_PROPERTIES.filter((row) => row.status === "in_stock").slice(0, limit);
+    }
+
+    return data as Property[];
+  } catch {
+    return DUMMY_PROPERTIES.filter((row) => row.status === "in_stock").slice(0, limit);
+  }
 }
 

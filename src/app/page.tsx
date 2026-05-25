@@ -48,6 +48,9 @@ export default async function HomePage() {
           <h2 className="text-2xl font-bold">Properti Unggulan</h2>
           <p className="text-sm text-zinc-600">Maksimal 6 listing terbaru</p>
         </div>
+        <p className="mb-4 text-xs text-zinc-500">
+          Placeholder aktif: jika data database kosong, sistem menampilkan properti dummy otomatis.
+        </p>
 
         {featured.length === 0 ? (
           <div className="rounded-lg border border-dashed border-zinc-300 bg-white p-8 text-center text-sm text-zinc-500">

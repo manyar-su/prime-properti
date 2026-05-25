@@ -30,6 +30,9 @@ export default async function AgentPropertiesPage({
         <div>
           <h1 className="text-2xl font-bold">Listing Properti</h1>
           <p className="text-sm text-zinc-600">Cari, filter, dan lihat detail listing properti internal.</p>
+          <p className="text-xs text-zinc-500">
+            Mode placeholder: data dummy tampil otomatis saat data tabel properti belum tersedia.
+          </p>
         </div>
         <PropertyListClient
           properties={data}
