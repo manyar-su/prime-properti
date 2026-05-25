@@ -197,7 +197,53 @@ export function PropertyListClient({
         )}
       </section>
 
-      <section className="overflow-x-auto rounded-xl border border-zinc-200 bg-white shadow-sm">
+      <section className="space-y-3 md:hidden">
+        {properties.map((property) => (
+          <article
+            key={property.id}
+            className="rounded-xl border border-zinc-200 bg-white p-3 shadow-sm"
+            role="button"
+            tabIndex={0}
+            onClick={() => setActiveProperty(property)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                setActiveProperty(property);
+              }
+            }}
+          >
+            <div className="flex gap-3">
+              <Image
+                src={getPropertyImageUrl(property)}
+                alt={`Foto ${property.nama_property}`}
+                width={220}
+                height={150}
+                className="h-20 w-28 rounded object-cover"
+              />
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-bold text-[#1A1A1A]">{property.nama_property}</p>
+                <p className="text-xs text-zinc-600">{property.group ?? "Tanpa group"}</p>
+                <p className="mt-1 text-xs text-zinc-600">{property.lebar} x {property.panjang} m • {TYPE_LABELS[property.tipe]}</p>
+                <p className="mt-1 text-sm font-extrabold text-[#1A1A1A]">{formatRupiah(property.price)}</p>
+              </div>
+            </div>
+            <div className="mt-3 flex items-center justify-between">
+              <div className="flex gap-2">
+                <StatusBadge status={property.status} />
+                <ReadyBadge siap={property.siap} />
+              </div>
+              <p className="text-[11px] font-semibold text-[#C9A961]">Tap detail</p>
+            </div>
+          </article>
+        ))}
+        {properties.length === 0 && (
+          <div className="rounded-xl border border-dashed border-zinc-300 bg-white px-4 py-8 text-center text-sm text-zinc-500">
+            Tidak ada data properti.
+          </div>
+        )}
+      </section>
+
+      <section className="hidden overflow-x-auto rounded-xl border border-zinc-200 bg-white shadow-sm md:block">
         <table className="w-full min-w-[1000px] text-left text-sm">
           <thead className="bg-gradient-to-r from-zinc-100 to-[#f5edd8] text-xs uppercase text-zinc-600">
             <tr>
@@ -253,9 +299,9 @@ export function PropertyListClient({
         {properties.length === 0 && <p className="px-4 py-8 text-sm text-zinc-500">Tidak ada data properti.</p>}
       </section>
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-zinc-600">Total {total} properti</p>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             variant="outline"
             disabled={page <= 1}
@@ -267,7 +313,7 @@ export function PropertyListClient({
           >
             Sebelumnya
           </Button>
-          <span className="text-sm">Hal. {page} / {pages}</span>
+          <span className="text-xs sm:text-sm">Hal. {page} / {pages}</span>
           <Button
             variant="outline"
             disabled={page >= pages}
