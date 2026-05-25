@@ -1,13 +1,17 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export function LogoMark() {
   return (
-    <div className="flex items-center gap-2">
-      <div className="h-8 w-8 rounded-sm bg-[#C9A961]" aria-hidden />
-      <div>
-        <p className="text-sm font-bold tracking-wide text-[#1A1A1A]">PRIME PROPERTY</p>
-        <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500">placeholder brand</p>
-      </div>
+    <div className="flex items-center">
+      <Image
+        src="/images/brand/prime-property-logo.jpeg"
+        alt="Prime Property Logo"
+        width={180}
+        height={56}
+        className="h-11 w-auto object-contain sm:h-12"
+        priority
+      />
     </div>
   );
 }
