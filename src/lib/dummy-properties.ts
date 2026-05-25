@@ -2,6 +2,14 @@ import type { Property, PropertyFilters } from "@/types/property";
 
 const KAWASAN = ["Krakatau", "Pancing", "Tembung", "Helvetia", "Cemara Asri", "Kuala"];
 const HADAP = ["Utara", "Selatan", "Timur", "Barat"] as const;
+const RUKO_PINTEREST_PHOTOS = [
+  "https://i.pinimg.com/736x/9b/36/b1/9b36b15cf1f7b6cf8bbe09b275eef729.jpg",
+  "https://i.pinimg.com/originals/b7/e9/8e/b7e98eb13b857ff9c84a31d221dac701.jpg",
+];
+const VILLA_PINTEREST_PHOTOS = [
+  "https://i.pinimg.com/564x/07/d5/fd/07d5fdc822cf85ef3c995455ad3253a5.jpg",
+  "https://i.pinimg.com/originals/b7/e9/8e/b7e98eb13b857ff9c84a31d221dac701.jpg",
+];
 
 function generateDummyProperty(index: number): Property {
   const nomor = index + 1;
@@ -9,16 +17,19 @@ function generateDummyProperty(index: number): Property {
   const kawasan = KAWASAN[index % KAWASAN.length];
   const hadap = HADAP[index % HADAP.length];
   const status = nomor % 7 === 0 ? "sold_out" : "in_stock";
+  const tipe = nomor % 2 === 0 ? "ruko" : "villa";
+  const fotoRuko = RUKO_PINTEREST_PHOTOS[index % RUKO_PINTEREST_PHOTOS.length];
+  const fotoVilla = VILLA_PINTEREST_PHOTOS[index % VILLA_PINTEREST_PHOTOS.length];
 
   return {
     id: `dummy-${nomor}`,
     nama_property: `Placeholder Prime ${String(nomor).padStart(2, "0")}`,
-    foto_url: nomor % 2 === 0 ? "/images/properties/ruko-placeholder.svg" : "/images/properties/villa-placeholder.svg",
+    foto_url: tipe === "ruko" ? fotoRuko : fotoVilla,
     group: nomor % 4 === 0 ? null : `Cluster ${((nomor - 1) % 6) + 1}`,
     lebar: 4 + ((nomor - 1) % 4) + 0.5,
     panjang: 12 + ((nomor - 1) % 10),
     hadap: [hadap],
-    tipe: nomor % 2 === 0 ? "ruko" : "villa",
+    tipe,
     tingkat: nomor % 5 === 0 ? 2.5 : ((nomor - 1) % 3) + 1,
     price: 550_000_000 + nomor * 22_500_000,
     carport: nomor % 3 !== 0,
