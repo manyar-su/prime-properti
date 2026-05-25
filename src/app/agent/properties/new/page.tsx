@@ -3,7 +3,7 @@ import { PropertyForm } from "@/components/agent/property-form";
 import { requireRole } from "@/lib/security/auth";
 
 export default async function NewPropertyPage() {
-  const session = await requireRole(["superadmin"]);
+  const session = await requireRole(["admin", "superadmin"]);
 
   return (
     <AgentShell session={session}>

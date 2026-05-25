@@ -32,7 +32,7 @@ export async function POST(request: Request) {
   const csrfError = requireCsrf(request);
   if (csrfError) return csrfError;
 
-  const auth = await requireApiRole(request, ["superadmin"]);
+  const auth = await requireApiRole(request, ["admin", "superadmin"]);
   if (!auth.session) return jsonError("Unauthorized", 401);
   if (auth.forbidden) return jsonError("Forbidden", 403);
 

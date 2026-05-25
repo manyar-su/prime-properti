@@ -10,7 +10,7 @@ export default async function EditPropertyPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const session = await requireRole(["superadmin"]);
+  const session = await requireRole(["admin", "superadmin"]);
   const { id } = await params;
 
   const property = await getPropertyById(id);

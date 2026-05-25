@@ -328,7 +328,7 @@ export function PropertyListClient({
         </div>
       </div>
 
-      {role === "superadmin" && (
+      {(role === "superadmin" || role === "admin") && (
         <div>
           <Link href="/agent/properties/new" className="inline-block rounded-md bg-[#C9A961] px-4 py-2 text-sm font-semibold text-[#1A1A1A]">
             + Tambah Properti

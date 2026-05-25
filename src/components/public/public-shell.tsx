@@ -5,11 +5,11 @@ export function LogoMark() {
   return (
     <div className="flex items-center">
       <Image
-        src="/images/brand/prime-property-logo.jpeg"
+        src="/images/brand/prime-property-logo.png"
         alt="Prime Property Logo"
-        width={180}
-        height={56}
-        className="h-11 w-auto object-contain sm:h-12"
+        width={210}
+        height={60}
+        className="h-10 w-auto object-contain sm:h-12"
         priority
       />
     </div>

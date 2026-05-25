@@ -70,7 +70,7 @@ export default async function PropertyDetailPage({
           >
             Kembali
           </Link>
-          {session.role === "superadmin" && (
+          {(session.role === "superadmin" || session.role === "admin") && (
             <>
               <Link
                 href={`/agent/properties/${property.id}/edit`}
